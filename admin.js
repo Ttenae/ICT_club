@@ -114,3 +114,25 @@ $("#csvBtn").addEventListener("click", () => {
   const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv" })), download: `oda-ict-registrations-${new Date().toISOString().slice(0, 10)}.csv` });
   a.click(); URL.revokeObjectURL(a.href);
 });
+
+/* ---------- Auto-Logout on Tab Switch (1 Minute Timeout) ---------- */
+let hiddenTimer = null;
+
+document.addEventListener("visibilitychange", () => {
+  // If the user leaves the tab (switches apps/tabs or minimizes)
+  if (document.hidden) {
+    hiddenTimer = setTimeout(() => {
+      if (auth.currentUser) {
+        signOut(auth); // Triggers your existing onAuthStateChanged logic
+      }
+      hiddenTimer = null;
+    }, 60000); // 60,000 milliseconds = 1 minute
+  } 
+  // If the user returns to the tab before 1 minute
+  else {
+    if (hiddenTimer) {
+      clearTimeout(hiddenTimer);
+      hiddenTimer = null;
+    }
+  }
+});
