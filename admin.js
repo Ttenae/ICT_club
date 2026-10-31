@@ -5,20 +5,74 @@ import { collection, query, orderBy, getDocs, deleteDoc, doc } from "https://www
 const $ = s => document.querySelector(s);
 let all = [];
 let deleteTargetId = null; // Tracks which row we are deleting
+let hiddenTime = 0; // Tracks when the tab was hidden
+let authInitialized = false; // Prevents signout loop on initial load
 
 /* ---------- Auth ---------- */
 $("#loginForm").addEventListener("submit", async e => {
   e.preventDefault();
   const btn = $("#loginBtn"), err = $("#loginErr"); err.textContent = ""; btn.disabled = true; btn.textContent = "Signing in...";
-  try { await signInWithEmailAndPassword(auth, $("#email").value.trim(), $("#password").value); }
+  try { 
+    await signInWithEmailAndPassword(auth, $("#email").value.trim(), $("#password").value); 
+    // Mark the current tab as an active, intentional login
+    sessionStorage.setItem("admin_session", "active");
+  }
   catch { err.textContent = "Sign in failed. Check your email and password."; }
   finally { btn.disabled = false; btn.textContent = "Sign in"; }
 });
-$("#logoutBtn").addEventListener("click", () => signOut(auth));
-onAuthStateChanged(auth, user => {
-  $("#loginView").hidden = !!user; $("#dash").hidden = !user; $("#logoutBtn").hidden = !user;
-  if (user) load(); else { all = []; }
+
+$("#logoutBtn").addEventListener("click", () => {
+  sessionStorage.removeItem("admin_session");
+  signOut(auth);
 });
+
+onAuthStateChanged(auth, user => {
+  // 1. Handle Tab Close/Reopen Logic
+  // If Firebase says we are logged in, but this specific tab has no session flag, they closed the tab.
+  if (user && !sessionStorage.getItem("admin_session")) {
+    signOut(auth); // Force logout
+    sessionStorage.removeItem("admin_session");
+    return; // Stop running the rest of the code
+  }
+
+  // 2. Toggle Views
+  $("#loginView").hidden = !!user; 
+  $("#dash").hidden = !user; 
+  $("#logoutBtn").hidden = !user;
+  
+  if (user) {
+    load();
+    
+    // 3. Setup Tab-Switch Auto-Logout (Only once auth is confirmed)
+    if (!authInitialized) {
+      setupAutoLogout();
+      authInitialized = true;
+    }
+  } else { 
+    all = []; 
+    authInitialized = false;
+  }
+});
+
+/* ---------- Tab Switch Auto-Logout (1 Minute) ---------- */
+function setupAutoLogout() {
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      hiddenTime = Date.now();
+    } else {
+      if (hiddenTime > 0) {
+        const timeAway = Date.now() - hiddenTime;
+        const oneMinute = 60 * 1000; 
+        
+        if (timeAway >= oneMinute && auth.currentUser) {
+          sessionStorage.removeItem("admin_session");
+          signOut(auth); 
+        }
+        hiddenTime = 0;
+      }
+    }
+  });
+}
 
 /* ---------- Data ---------- */
 function skeleton() { $("#rows").innerHTML = Array.from({ length: 6 }, () => `<tr class="skel">${"<td><div></div></td>".repeat(9)}</tr>`).join(""); $("#state").textContent = ""; }
@@ -113,30 +167,4 @@ $("#csvBtn").addEventListener("click", () => {
   const csv = [head.join(","), ...rows.map(r => head.map(h => cell(h === "createdAt" ? fmt(r) : r[h])).join(","))].join("\n");
   const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv" })), download: `oda-ict-registrations-${new Date().toISOString().slice(0, 10)}.csv` });
   a.click(); URL.revokeObjectURL(a.href);
-});
-
-/* ---------- Auto-Logout on Tab Switch (1 Minute Timeout) ---------- */
-let hiddenTime = 0;
-
-document.addEventListener("visibilitychange", () => {
-  // If the user leaves the tab (switches apps/tabs or minimizes)
-  if (document.hidden) {
-    // Record the exact timestamp they left
-    hiddenTime = Date.now();
-  } 
-  // If the user returns to the tab
-  else {
-    if (hiddenTime > 0) {
-      const timeAway = Date.now() - hiddenTime;
-      const oneMinute = 60 * 1000; // 1 minute in milliseconds
-
-      // If they were gone for 1 minute or more, log them out
-      if (timeAway >= oneMinute && auth.currentUser) {
-        signOut(auth); 
-      }
-      
-      // Reset the timer
-      hiddenTime = 0;
-    }
-  }
 });
