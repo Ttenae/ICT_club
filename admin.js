@@ -116,23 +116,27 @@ $("#csvBtn").addEventListener("click", () => {
 });
 
 /* ---------- Auto-Logout on Tab Switch (1 Minute Timeout) ---------- */
-let hiddenTimer = null;
+let hiddenTime = 0;
 
 document.addEventListener("visibilitychange", () => {
   // If the user leaves the tab (switches apps/tabs or minimizes)
   if (document.hidden) {
-    hiddenTimer = setTimeout(() => {
-      if (auth.currentUser) {
-        signOut(auth); // Triggers your existing onAuthStateChanged logic
-      }
-      hiddenTimer = null;
-    }, 60000); // 60,000 milliseconds = 1 minute
+    // Record the exact timestamp they left
+    hiddenTime = Date.now();
   } 
-  // If the user returns to the tab before 1 minute
+  // If the user returns to the tab
   else {
-    if (hiddenTimer) {
-      clearTimeout(hiddenTimer);
-      hiddenTimer = null;
+    if (hiddenTime > 0) {
+      const timeAway = Date.now() - hiddenTime;
+      const oneMinute = 60 * 1000; // 1 minute in milliseconds
+
+      // If they were gone for 1 minute or more, log them out
+      if (timeAway >= oneMinute && auth.currentUser) {
+        signOut(auth); 
+      }
+      
+      // Reset the timer
+      hiddenTime = 0;
     }
   }
 });
