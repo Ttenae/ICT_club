@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ODA ICT Club — Choose Your Path. Build Your Future.</title>
+<meta name="description" content="Register for the ODA ICT Club learning tracks: Web Development or Python Programming.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="script.js"></script>
+<style>
+  /* Custom Telegram Button Styling */
+  .btn.telegram {
+    background: linear-gradient(135deg, #229ED9, #1c85b8);
+    border: none;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(34, 158, 217, 0.4);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  .btn.telegram:hover {
+    box-shadow: 0 12px 32px rgba(34, 158, 217, 0.6);
+    transform: translateY(-2px);
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid" aria-hidden="true"></div><div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<header class="nav" id="nav">
+  <a class="logo" href="#home">ODA<span>ICT</span></a>
+  <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+  <nav id="navLinks"><a href="#tracks">Learning Tracks</a><a href="#register">Register</a></nav>
+</header>
+<main>
+<section class="hero" id="home">
+  <div class="floaters" aria-hidden="true"><span style="--x:8%;--y:20%;--d:0s">&lt;/&gt;</span><span style="--x:84%;--y:16%;--d:-3s">{ }</span><span style="--x:14%;--y:70%;--d:-6s">def()</span><span style="--x:78%;--y:68%;--d:-2s">print()</span><span style="--x:50%;--y:8%;--d:-5s">#</span><span style="--x:92%;--y:44%;--d:-8s">&lt;div&gt;</span></div>
+  <p class="badge reveal">ODA ICT CLUB • LEARN • CREATE • INNOVATE</p>
+  <h1 class="reveal d1">ODA ICT CLUB</h1>
+  <h2 class="headline reveal d2">Choose Your Path. Build Your Future.</h2>
+  <p class="lead reveal d3">Discover your potential, master new technologies, and transform your ideas into real-world projects. Choose the learning track that inspires you.</p>
+  <div class="cta reveal d4"><a class="btn primary" href="#tracks">Explore Learning Tracks</a><a class="btn ghost" href="#register">Register Now</a></div>
+</section>
+
+<section class="section" id="tracks">
+  <div class="section-head reveal"><h2>Two tracks. One choice.</h2><p>Pick the path that fits you. You can switch before you submit.</p></div>
+  <div class="tracks" role="radiogroup" aria-label="Learning tracks">
+    <article class="track web reveal" data-track="Web Development" role="radio" aria-checked="false" tabindex="0">
+      <span class="check" aria-hidden="true">✓</span>
+      <div class="win" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div><div class="body"><b></b><b></b><b></b></div><em class="sym s1">&lt;html&gt;</em><em class="sym s2">{css}</em><em class="sym s3">JS</em></div>
+      <h3>Web Development</h3>
+      <p>Turn creative ideas into beautiful, responsive websites and interactive web applications.</p>
+      <ul><li>HTML5</li><li>CSS3</li><li>JavaScript</li><li>Responsive Web Design</li><li>Practical Projects</li></ul>
+      <button class="btn track-btn" type="button">Explore Web Development <span class="arrow">→</span></button>
+    </article>
+    <article class="track py reveal d1" data-track="Python Programming" role="radio" aria-checked="false" tabindex="0">
+      <span class="check" aria-hidden="true">✓</span>
+      <div class="win" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div><div class="code"><code><u>def</u> build(idea):</code><code>&nbsp;&nbsp;<u>for</u> step <u>in</u> idea:</code><code>&nbsp;&nbsp;&nbsp;&nbsp;learn(step)</code><code>&nbsp;&nbsp;<u>return</u> "software"</code></div><em class="sym s1">🐍</em><em class="sym s2">for</em><em class="sym s3">[ ]</em></div>
+      <h3>Python Programming</h3>
+      <p>Learn programming fundamentals, solve problems, and develop the skills to create useful software.</p>
+      <ul><li>Python Fundamentals</li><li>Variables and Data Types</li><li>Conditions and Loops</li><li>Functions</li><li>Practical Projects</li></ul>
+      <button class="btn track-btn" type="button">Explore Python <span class="arrow">→</span></button>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="register">
+  <div class="panel reveal">
+    <div id="formView">
+      <h2 id="formTitle">Your Journey Starts Here</h2>
+      <p class="sub">Take the first step toward building your technology skills.</p>
+      <div class="progress" aria-label="Form progress"><div class="pstep on" data-p="1"><b>1</b> Student information</div><div class="pline"><i id="pfill"></i></div><div class="pstep" data-p="2"><b>2</b> Track and confirmation</div></div>
+      <form id="regForm" novalidate>
+        <div class="step on" data-step="1">
+          <div class="grid">
+            <div class="field full"><input id="fullName" name="fullName" placeholder=" " autocomplete="name" maxlength="60"><label for="fullName">Full Name</label><small class="err" data-err="fullName"></small></div>
+            <div class="field"><input id="studentId" name="studentId" placeholder=" " autocapitalize="characters" maxlength="20"><label for="studentId">Student ID</label><small class="err" data-err="studentId"></small></div>
+            <div class="field"><input id="phoneNumber" name="phoneNumber" type="tel" placeholder=" " autocomplete="tel" maxlength="18"><label for="phoneNumber">Phone Number</label><small class="err" data-err="phoneNumber"></small></div>
+            <div class="field"><input id="grade" name="grade" placeholder=" " maxlength="10"><label for="grade">Grade</label><small class="err" data-err="grade"></small></div>
+            <div class="field"><input id="section" name="section" placeholder=" " maxlength="10"><label for="section">Section</label><small class="err" data-err="section"></small></div>
+            <div class="field full"><input id="email" name="email" type="email" placeholder=" " autocomplete="email" maxlength="100"><label for="email">Email Address (optional)</label><small class="err" data-err="email"></small></div>
+          </div>
+          <div class="actions"><span></span><button class="btn primary" type="button" id="nextBtn">Continue</button></div>
+        </div>
+        <div class="step" data-step="2">
+          <fieldset class="picker"><legend>Preferred Learning Track</legend>
+            <label class="opt web"><input type="radio" name="selectedTrack" value="Web Development"><span>Web Development</span></label>
+            <label class="opt py"><input type="radio" name="selectedTrack" value="Python Programming"><span>Python Programming</span></label>
+            <small class="err" data-err="selectedTrack"></small>
+          </fieldset>
+          <label class="confirm"><input type="checkbox" id="confirm"><span>I confirm that I am an existing ODA ICT Club member and that the information above is correct.</span></label>
+          <small class="err" data-err="confirm"></small>
+          <p class="status" id="formStatus" role="status" aria-live="polite"></p>
+          <div class="actions"><button class="btn ghost" type="button" id="backBtn">Back</button><button class="btn primary" type="submit" id="submitBtn"><span class="spin" hidden></span><span id="submitLabel">Complete My Registration</span></button></div>
+        </div>
+      </form>
+    </div>
+    <div id="successView" class="success" hidden>
+      <svg viewBox="0 0 52 52" class="tick" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M14 27l8 8 16-17"/></svg>
+      <h2>You're registered!</h2>
+      <p>Track: <strong id="doneTrack"></strong></p><p>Student ID: <strong id="doneId"></strong></p>
+      <p class="sub">Your registration was saved. Click below to join your track's Telegram group.</p>
+      
+      <!-- TELEGRAM JOIN BUTTON -->
+      <a href="#" id="telegramBtn" class="btn telegram" target="_blank" rel="noopener noreferrer">
+        Join Telegram Group
+      </a>
+
+      <button class="btn ghost" id="homeBtn" type="button" style="margin-top: 10px;">Back to Homepage</button>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="footer">© <span id="yr"></span> ODA ICT Club || Developed by Tesfaye Tilahun</footer>
+<button class="totop" id="toTop" aria-label="Back to top" hidden>↑</button>
+</body>
+</html>

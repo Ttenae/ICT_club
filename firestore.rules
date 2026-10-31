@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    function validRegistration(d, id) {
+      return d.keys().hasOnly(['fullName','studentId','grade','section','phoneNumber','email','selectedTrack','createdAt'])
+        && d.keys().hasAll(['fullName','studentId','grade','section','phoneNumber','email','selectedTrack','createdAt'])
+        && id.matches('^[A-Z0-9-]{3,20}$')
+        && d.studentId == id
+        && d.fullName is string && d.fullName.size() >= 3 && d.fullName.size() <= 60
+        && d.grade is string && d.grade.size() >= 1 && d.grade.size() <= 10
+        && d.section is string && d.section.size() >= 1 && d.section.size() <= 10
+        && d.phoneNumber is string && d.phoneNumber.matches('^\\+?[0-9 -]{9,15}$')
+        && d.email is string && d.email.size() <= 100
+        && d.selectedTrack in ['Web Development', 'Python Programming']
+        && d.createdAt == request.time;
+    }
+    match /registrations/{id} {
+      allow read: if isAdmin();
+      // "create" only applies when the document does not exist yet, so a duplicate Student ID is refused atomically.
+      allow create: if validRegistration(request.resource.data, id)
+        // OPTIONAL member check: remove the leading // on the next line after adding members/{ID} documents.
+        // && exists(/databases/$(database)/documents/members/$(id))
+        ;
+      allow update: if false;
+      allow delete: if isAdmin();   // ← CHANGED: admins can now delete
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
